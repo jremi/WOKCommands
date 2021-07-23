@@ -134,7 +134,14 @@ class SlashCommands {
       .resolveData()
       .resolveFiles();
 
-    return { ...data, files };
+      const message: { [key: string] : any, files: Array<object> | null; embeds?: Array<object> } = {
+        ...data,
+        files,
+      };
+
+      if (Array.isArray(content)) message.embeds = content;
+
+      return message;
   }
 
   public async invokeCommand(
@@ -176,7 +183,9 @@ class SlashCommands {
 
     // Handle embeds
     if (typeof result === "object") {
-      const embed = new MessageEmbed(result);
+      const embed = Array.isArray(result)
+        ? result.map((r) => new MessageEmbed(r))
+        : new MessageEmbed(result);
       data = await this.createAPIMessage(interaction, embed);
     }
 

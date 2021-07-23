@@ -160,7 +160,7 @@ var SlashCommands = /** @class */ (function () {
     };
     SlashCommands.prototype.createAPIMessage = function (interaction, content) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, data, files;
+            var _a, data, files, message;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, discord_js_1.APIMessage.create(
@@ -170,7 +170,10 @@ var SlashCommands = /** @class */ (function () {
                             .resolveFiles()];
                     case 1:
                         _a = _b.sent(), data = _a.data, files = _a.files;
-                        return [2 /*return*/, __assign(__assign({}, data), { files: files })];
+                        message = __assign(__assign({}, data), { files: files });
+                        if (Array.isArray(content))
+                            message.embeds = content;
+                        return [2 /*return*/, message];
                 }
             });
         });
@@ -206,7 +209,9 @@ var SlashCommands = /** @class */ (function () {
                             content: result,
                         };
                         if (!(typeof result === "object")) return [3 /*break*/, 3];
-                        embed = new discord_js_1.MessageEmbed(result);
+                        embed = Array.isArray(result)
+                            ? result.map(function (r) { return new discord_js_1.MessageEmbed(r); })
+                            : new discord_js_1.MessageEmbed(result);
                         return [4 /*yield*/, this.createAPIMessage(interaction, embed)];
                     case 2:
                         data = _a.sent();
